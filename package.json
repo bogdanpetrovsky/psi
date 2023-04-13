@@ -13,7 +13,11 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "@types/memcached": "^2.2.7",
+    "memcached": "^2.2.2",
+    "mongoose": "^7.0.3"
+  },
   "devDependencies": {
     "@playwright/test": "^1.32.2",
     "@types/node": "^18.15.11",
