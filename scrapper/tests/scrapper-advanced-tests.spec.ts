@@ -372,7 +372,7 @@ test.describe('Routing', () => {
     await page.goBack();
     await expect(todoItem).toHaveCount(2);
     await page.goBack();
-    await expect(todoItem).toHaveCount(2);
+    await expect(todoItem).toHaveCount(3);
   });
 
   test('should allow me to display completed items', async ({ page }) => {
