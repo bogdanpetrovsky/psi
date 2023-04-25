@@ -1,0 +1,32 @@
+{
+  "name": "psi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "npx nodemon",
+    "build": "rimraf ./build && tsc",
+    "start": "npm run build && node build/index.js",
+    "test": "npx playwright test",
+    "show-test": "npx playwright show-report",
+    "test-jest": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/memcached": "^2.2.7",
+    "dateformat": "^5.0.3",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "memcached": "^2.2.2",
+    "mongoose": "^7.0.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "@types/node": "^18.15.11",
+    "nodemon": "^2.0.22",
+    "rimraf": "^4.4.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.3"
+  }
+}
