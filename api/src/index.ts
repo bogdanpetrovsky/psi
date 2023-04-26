@@ -8,6 +8,8 @@ const memcached = new Memcached();
 import { News as NewsSchema } from './models/news.model';
 import { INews } from './models/News';
 const News = mongoose.model('News', NewsSchema);
+const db = process.env.MONGO_URL || 'mongodb://localhost:27017/psi';
+const port = process.env.PORT || 3000;
 
 export const app = express();
 
@@ -17,9 +19,11 @@ app.use(express.static("src/views"));
 
 async function main() {
   try{
-    await mongoose.connect("mongodb://127.0.0.1:27017/psi");
-    app.listen(3000);
-    console.log("Successfully started on port 3000...");
+    if (!db) { throw new Error("Mongo URL is not defined!"); }
+
+    await mongoose.connect(db, { });
+    app.listen(port);
+    console.log("Successfully started on port 3003...");
   }
   catch(err) {
     return console.log(err);
@@ -60,7 +64,7 @@ app.get("/:options", async (req, res) => {
   //   let titles: INews[] = [];
   //   if (!data) {
   //     titles = await fetchNews(params);
-  //     memcached.set(JSON.stringify(params), titles, 150, function (err: any) {
+  //     memcached.set(JSON.stringify({...params, wew: false}), titles, 150, function (err: any) {
   //       if (err) console.log(err);
   //     });
   //   } else {

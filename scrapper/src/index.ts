@@ -1,5 +1,6 @@
 import { chromium } from '@playwright/test';
 var amqp = require('amqplib/callback_api');
+const queue = process.env.QUEUE_URL || 'amqp://localhost';
 
 const scrapper = async (): Promise<string[]> => {
   // Setup
@@ -20,9 +21,11 @@ const scrapper = async (): Promise<string[]> => {
 };
 
 async function startUp() {
-  amqp.connect('amqp://localhost', {}, function(error0: any, connection: any) {
-    if (error0) { throw error0;
-    }
+  if (!queue) { throw new Error('No queue url'); }
+
+  amqp.connect(queue, {}, function(error0: any, connection: any) {
+    if (error0) { throw error0; }
+
     connection.createChannel(function(error1: any, channel: any) {
       if (error1) { throw error1; }
 
@@ -40,4 +43,6 @@ async function startUp() {
   });
 }
 
-startUp().then();
+setTimeout(() => {
+  startUp().then();
+}, 1000);

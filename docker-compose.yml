@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  api:
+    build: ./api
+    container_name: realworld-docker-api
+    command: npm run start:dev
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - MONGO_URL=mongodb://api_db:27017/psi
+    depends_on:
+      - api_db
+    networks:
+      - realworld-docker-network
+
+  rabbit_queue:
+    image: rabbitmq:latest
+    container_name: realworld-docker-rabbitmq
+    ports:
+      - "0.0.0.0:5672:5672"
+      - "0.0.0.0:15672:15672"
+    networks:
+      - realworld-docker-network
+
+  consumer:
+    build: ./consumer
+    container_name: realworld-docker-consumer
+    command: npm run start:dev
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGO_URL=mongodb://api_db:27017/psi
+      - QUEUE_URL=amqp://rabbit_queue:5672
+      - MEMCACHED_URL=memcached:11211
+    depends_on:
+      - api_db
+      - rabbit_queue
+    networks:
+      - realworld-docker-network
+
+  scrapper:
+    build: ./scrapper
+    container_name: realworld-docker-scrapper
+    command: npm run start:prod
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    environment:
+      - QUEUE_URL=amqp://rabbit_queue:5672
+    depends_on:
+      - consumer
+      - rabbit_queue
+    networks:
+      - realworld-docker-network
+
+  api_db:
+    image: mongo:latest
+    container_name: realworld-docker-api-db
+    volumes:
+      - mongodb_api:/data/db
+    networks:
+      - realworld-docker-network
+
+volumes:
+  mongodb_api:
+
+networks:
+  realworld-docker-network:
+    driver: bridge
