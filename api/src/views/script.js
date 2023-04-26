@@ -5,6 +5,9 @@ let emailButtons = document.querySelectorAll("span.contact-email");
 let copyAlert = document.getElementById("copy-info-container");
 let nextPageButton = document.getElementById("next-page");
 let prevPageButton = document.getElementById("prev-page");
+let likeButtons = document.querySelectorAll("div.like-btn");
+let dislikeButtons = document.querySelectorAll("div.dislike-btn");
+console.log(likeButtons);
 
 text.value = searchValue;
 let page = parseInt(pageNumber || 1);
@@ -26,6 +29,16 @@ emailButtons.forEach(btn => btn.addEventListener("click", (event) => {
 
   copyAlert.style.visibility = 'unset';
   setTimeout(() => copyAlert.style.visibility = 'hidden', 2500);
+}));
+
+likeButtons.forEach(btn => btn.addEventListener("click", (event) => {
+  const id = btn.children[btn.children.length - 1].innerText;
+  window.location.href = `/like/${id}`;
+}));
+
+dislikeButtons.forEach(btn => btn.addEventListener("click", (event) => {
+  const id = btn.children[btn.children.length - 1].innerText;
+  window.location.href = `/dislike/${id}`;
 }));
 
 getToTop.addEventListener("click", () => {
@@ -52,4 +65,7 @@ prevPageButton.addEventListener("click", () => {
 
 function search(page) {
   window.location.href = `/name:${text.value},page:${page || 1}`;
+}
+function like(id) {
+  window.location.href = `/likes/${id}`;
 }

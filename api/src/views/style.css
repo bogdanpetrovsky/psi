@@ -6,6 +6,7 @@
   --primary-color: white;
   --main-light: #eeeeee;
   --text-color: #3f0101;
+  --light-green: #62a462;
   font-family: "Poppins", sans-serif;
 }
 
@@ -196,6 +197,28 @@ body {
   top: 8px;
   right: 8px;
   font-size: 12px;
+}
+
+.thumbnail-reactions {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+}
+
+.like-btn, .dislike-btn {
+  margin-right: 8px;
+}
+
+.like-btn i {
+    font-size: 12px;
+    color: var(--light-green);
+}
+
+.dislike-btn i {
+  font-size: 12px;
+  color: var(--main-dark);
 }
 
 @media (min-width: 860px) {

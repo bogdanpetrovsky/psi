@@ -26,6 +26,28 @@ async function main() {
   }
 }
 
+app.get("/like/:id", async (req, res) => {
+  const newsItem = await News.findById(req.params.id);
+  if (!newsItem) { return res.redirect('/page:1'); }
+
+  if (!newsItem.likes) { newsItem.likes = 0; }
+  newsItem.likes++;
+  await newsItem.save();
+
+  res.redirect('/page:1');
+});
+
+app.get("/dislike/:id", async (req, res) => {
+  const newsItem = await News.findById(req.params.id);
+  if (!newsItem) { return res.redirect('/page:1'); }
+
+  if (!newsItem.dislikes) { newsItem.dislikes = 0; }
+  newsItem.dislikes++;
+  await newsItem.save();
+
+  res.redirect('/page:1');
+});
+
 app.get("/", async (req, res) => {
   res.redirect('/page:1');
 });
@@ -80,9 +102,12 @@ async function fetchNews(params: { [key: string]: string | number }): Promise<IN
 
 
   results.forEach((news) => formattedResults.push({
+    _id: news._id,
     // @ts-ignore
     title: news.title,
     createdAt: news.createdAt.toLocaleString(),
+    likes: news.likes || 0,
+    dislikes: news.dislikes || 0,
   }));
 
   return formattedResults;

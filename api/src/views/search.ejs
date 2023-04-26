@@ -42,7 +42,19 @@
               <% for(let i=0; i < results.length; i++) { %>
                 <div class="result-thumbnail">
                     <div class="result-thumbnail-header">
-                        <a class="result-thumbnail-title" target="_blank" href="https://<%= results[i].website %>"><%= results[i].title %></a>
+                        <a class="result-thumbnail-title" target="_blank"><%= results[i].title %></a>
+                        <div class="thumbnail-reactions">
+                            <div class="like-btn">
+                                <i class="fa fa-thumbs-up"></i>
+                                <span><%= results[i].likes %></span>
+                                <i hidden><%= results[i]._id %></i>
+                            </div>
+                            <div class="dislike-btn">
+                                <i class="fa fa-thumbs-down"></i>
+                                <span><%= results[i].dislikes %></span>
+                                <i hidden><%= results[i]._id %></i>
+                            </div>
+                        </div>
                         <span class="news-date"><%= results[i].createdAt %></span>
                     </div>
                 </div>
