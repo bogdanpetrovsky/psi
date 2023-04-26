@@ -76,7 +76,7 @@ async function fetchNews(params: { [key: string]: string | number }): Promise<IN
     { title: { $regex: params.name || '' } },
     {},
     { limit: 25, skip: (pageNumber - 1) * 25 }
-  ).lean();
+  ).sort({createdAt: -1}).lean();
 
 
   results.forEach((news) => formattedResults.push({

@@ -1,10 +1,5 @@
 import { chromium } from '@playwright/test';
-import mongoose from 'mongoose';
-var Memcached = require('memcached');
-const memcached = new Memcached();
-
-import { News as NewsSchema } from './models/news.model';
-const News = mongoose.model('News', NewsSchema);
+var amqp = require('amqplib/callback_api');
 
 const scrapper = async (): Promise<string[]> => {
   // Setup
@@ -24,38 +19,25 @@ const scrapper = async (): Promise<string[]> => {
   return filteredTitles;
 };
 
-async function checkForCacheAndSave(titles: string[]) {
-  await memcached.get(titles.toString(), function( err: any, data: any ) {
-    if (!data) {
-      memcached.set(titles.toString(), titles, 10000, function (err: any) {
-        if(err) throw new err;
-      });
-    }
-    console.log(data);
-  });
-}
-
 async function startUp() {
-  const memcached = new Memcached();
-  /* code to connect with your memecahced server */
-  memcached.connect( 'localhost:11211', function( err: any, conn: any ) {
-    if (err) {
-      console.log(conn.server, 'error while memcached connection!!');
+  amqp.connect('amqp://localhost', {}, function(error0: any, connection: any) {
+    if (error0) { throw error0;
     }
+    connection.createChannel(function(error1: any, channel: any) {
+      if (error1) { throw error1; }
+
+      const queue = 'scrapper';
+      channel.assertQueue(queue, { durable: false });
+
+      setInterval(async () => {
+        const scrapperData = await scrapper();
+        const msg = JSON.stringify(scrapperData);
+
+        channel.sendToQueue(queue, Buffer.from(msg));
+        console.log(" [x] Sent %s", msg);
+      }, 5000);
+    });
   });
-
-  mongoose.connect('mongodb://127.0.0.1:27017/psi')
-  .then(() => console.log('Connected!'));
-  setInterval(async () => {
-    const scrapperData = await scrapper();
-    await checkForCacheAndSave(scrapperData);
-    for (const title of scrapperData) {
-      const existingNews = await News.findOne({title});
-      if (existingNews) { continue; }
-
-      await News.create({title});
-    }
-  }, 5000);
 }
 
 startUp().then();
